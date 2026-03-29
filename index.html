@@ -286,7 +286,7 @@ header { display:flex; justify-content:space-between; align-items:center; margin
 .chart-area { position:relative; }
 .chart-panel { display:none; }
 .chart-panel.active { display:block; }
-.svg-chart { width:100%; overflow:visible; display:block; }
+.svg-chart { width:100%; overflow:hidden; display:block; max-width:100%; }
 .chart-axis-label { font-family:'Patrick Hand',cursive; fill:var(--text-2); font-size:11px; }
 .chart-grid-line { stroke:rgba(255,255,255,.06); stroke-width:1; }
 .stats-row { display:flex; gap:.8rem; margin-top:1.2rem; flex-wrap:wrap; }
@@ -518,6 +518,143 @@ header { display:flex; justify-content:space-between; align-items:center; margin
 .habit-main-row {
   display:flex; align-items:center; gap:.75rem;
   padding:.7rem .9rem; cursor:grab;
+}
+
+/* ═══════════════════════════════════
+   MOBILE RESPONSIVE  ≤ 600px
+═══════════════════════════════════ */
+@media (max-width: 600px) {
+
+  /* ── Layout ── */
+  .wrap { padding: 1rem .75rem 4rem; }
+  .grid { grid-template-columns: 1fr; gap: 1rem; }
+
+  /* ── Header ── */
+  header { gap: .6rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+  .brand-text h1 { font-size: 1.55rem; }
+  .brand-text p { font-size: .7rem; }
+  .header-right { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
+
+  /* Date pill takes full width on left, backup button on right */
+  .date-pill-wrap { flex: 1; }
+  .date-pill-btn { width: 100%; font-size: .75rem; padding: .38rem .8rem; }
+  #datePillText { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px; }
+  .backup-btn { font-size: .75rem; padding: .38rem .7rem; }
+  .backup-btn span:not(.backup-pulse) { display: none; } /* hide "Backup" text, keep icon + pulse */
+
+  /* Dropdowns: full width on mobile */
+  .schedule-dropdown,
+  .backup-dropdown {
+    width: calc(100vw - 1.5rem) !important;
+    left: .75rem !important;
+    right: .75rem !important;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  /* ── Overview card: stack ring + text + flame vertically ── */
+  .overview-card {
+    padding: 1.2rem 1rem;
+    grid-template-columns: 1fr !important;
+    gap: .8rem;
+    justify-items: center;
+    text-align: center;
+  }
+  /* Side-by-side ring & flame on mobile */
+  .overview-card .ring-wrap,
+  .overview-card .streak-wrap {
+    width: 90px; height: 90px;
+  }
+  .overview-card .ring-wrap svg,
+  .overview-card .streak-flame-svg {
+    width: 90px !important; height: 90px !important;
+  }
+  /* Put ring and flame side by side */
+  .overview-card {
+    grid-template-columns: 90px 1fr 90px !important;
+    gap: .6rem;
+  }
+  .ov-info { text-align: center; min-width: 0; }
+  .ov-info h2 { font-size: 1.15rem; }
+  .ov-info p { font-size: .78rem; }
+  .quote { font-size: .82rem; }
+  .week-dots { justify-content: center; }
+  .week-dots-wrap label { font-size: .58rem; }
+
+  /* ── Section cards ── */
+  .section-card { padding: 1rem 1rem .9rem; }
+  .analysis-section { padding: 1rem 1rem 1.2rem; }
+
+  /* ── Section header ── */
+  .section-hd { flex-wrap: wrap; gap: .4rem; }
+  .section-title { font-size: 1.05rem; }
+
+  /* ── Todo header ring + title ── */
+  .todo-hd-row { gap: .55rem; }
+  .todo-hd-row svg[width="52"] { width: 42px !important; height: 42px !important; }
+
+  /* ── Add row ── */
+  .add-row input { font-size: .88rem; padding: .48rem .85rem; }
+  .btn { font-size: .85rem; padding: .48rem .9rem; }
+
+  /* ── Day nav ── */
+  .day-nav { gap: .35rem; }
+  .dnav-btn { font-size: .72rem; padding: .24rem .55rem; }
+  .dnav-label { font-size: .74rem; }
+  .dnav-back { font-size: .68rem; padding: .22rem .5rem; }
+
+  /* ── Habit items ── */
+  .habit-main-row { gap: .5rem; padding: .55rem .65rem; }
+  .drag-handle { display: none; } /* hide on touch — drag not useful on mobile */
+  .h-name { font-size: .92rem; }
+  .h-meta { font-size: .65rem; gap: .3rem; }
+  .h-actions { gap: .05rem; }
+  .icon-btn { padding: .22rem .38rem; }
+  .sub-count-badge { font-size: .58rem; padding: 1px 4px; }
+  .past-badge { font-size: .62rem; padding: .15rem .4rem; }
+
+  /* ── Subhabit panel ── */
+  .subhabit-panel { padding-left: .3rem; padding-right: .3rem; }
+  .add-sub-row { gap: .25rem; }
+  .add-sub-inp { font-size: .78rem; padding: .28rem .55rem; }
+  .add-sub-btn { font-size: .78rem; padding: .28rem .55rem; }
+
+  /* ── Analytics ── */
+  .analysis-hd { flex-direction: column; align-items: flex-start; gap: .6rem; }
+  .analysis-hd > div { width: 100%; justify-content: space-between; }
+  .period-toggle { width: 100%; justify-content: stretch; }
+  .period-btn { flex: 1; text-align: center; font-size: .78rem; padding: .28rem .4rem; }
+  .svg-chart { overflow: hidden; }
+  .stats-row { gap: .4rem; }
+  .stat-chip { min-width: 60px; padding: .45rem .5rem; }
+  .stat-chip .stat-val { font-size: 1.15rem; }
+  .stat-chip .stat-lbl { font-size: .55rem; }
+
+  /* ── Toast ── */
+  #toast { font-size: .85rem; padding: .5rem 1.2rem; bottom: 1.2rem; }
+
+  /* Disable lift-hover animations on mobile (they feel wrong on touch) */
+  .glass:hover { transform: none; }
+  .habit-item-wrap:hover { transform: none; }
+  .todo-item:hover { transform: none; }
+}
+
+/* ── Very small phones ≤ 380px ── */
+@media (max-width: 380px) {
+  .overview-card {
+    grid-template-columns: 75px 1fr 75px !important;
+    gap: .4rem;
+    padding: 1rem .75rem;
+  }
+  .overview-card .ring-wrap,
+  .overview-card .streak-wrap { width: 75px; height: 75px; }
+  .overview-card .ring-wrap svg,
+  .overview-card .streak-flame-svg { width: 75px !important; height: 75px !important; }
+  .ov-info h2 { font-size: 1rem; }
+  .date-pill-btn { font-size: .7rem; padding: .32rem .65rem; }
+  #datePillText { max-width: 100px; }
+  .backup-btn { padding: .32rem .55rem; }
+  .period-btn { font-size: .7rem; }
 }
 
   </style>
@@ -866,15 +1003,15 @@ header { display:flex; justify-content:space-between; align-items:center; margin
       <div class="chart-area">
         <div id="tooltip" class="chart-tooltip"></div>
         <div class="chart-panel active" id="panel-weekly">
-          <svg class="svg-chart" id="chart-weekly" height="160" viewBox="0 0 860 160" preserveAspectRatio="none"></svg>
+          <svg class="svg-chart" id="chart-weekly" viewBox="0 0 860 160" preserveAspectRatio="xMidYMid meet" style="height:auto"></svg>
           <div class="stats-row" id="stats-weekly"></div>
         </div>
         <div class="chart-panel" id="panel-biweekly">
-          <svg class="svg-chart" id="chart-biweekly" height="160" viewBox="0 0 860 160" preserveAspectRatio="none"></svg>
+          <svg class="svg-chart" id="chart-biweekly" viewBox="0 0 860 160" preserveAspectRatio="xMidYMid meet" style="height:auto"></svg>
           <div class="stats-row" id="stats-biweekly"></div>
         </div>
         <div class="chart-panel" id="panel-monthly">
-          <svg class="svg-chart" id="chart-monthly" height="170" viewBox="0 0 860 170" preserveAspectRatio="none"></svg>
+          <svg class="svg-chart" id="chart-monthly" viewBox="0 0 860 170" preserveAspectRatio="xMidYMid meet" style="height:auto"></svg>
           <div class="stats-row" id="stats-monthly"></div>
         </div>
       </div>
@@ -1053,12 +1190,21 @@ function toggleScheduler(e){
   if(schedOpen){ closeScheduler(); return; }
   if(backupOpen) closeBackup();
   schedOpen=true;
-  // Position dropdown below the button
   const btn=$('datePillBtn');
   const rect=btn.getBoundingClientRect();
   const dd=$('schedDropdown');
-  dd.style.top=(rect.bottom+8)+'px';
-  dd.style.right=(window.innerWidth-rect.right)+'px';
+  const isMobile=window.innerWidth<=600;
+  if(isMobile){
+    dd.style.top=(rect.bottom+6)+'px';
+    dd.style.left='.75rem';
+    dd.style.right='.75rem';
+    dd.style.width='';
+  } else {
+    dd.style.top=(rect.bottom+8)+'px';
+    dd.style.right=(window.innerWidth-rect.right)+'px';
+    dd.style.left='';
+    dd.style.width='330px';
+  }
   dd.classList.add('open');
   $('datePillBtn').classList.add('open');
   const tom=addDays(todayStr(),1);
@@ -1159,7 +1305,6 @@ function drawChart(period,data,days){
   const svgEl=$('chart-'+period);
   const W=860, H=period==='monthly'?170:160;
   svgEl.setAttribute('viewBox',`0 0 ${W} ${H}`);
-  svgEl.setAttribute('height', H);
 
   const pL=38, pR=16, pT=14, pB=30;
   const cW=W-pL-pR, cH=H-pT-pB, n=data.length;
@@ -1802,12 +1947,21 @@ function toggleBackup(e){
   if(backupOpen){ closeBackup(); return; }
   if(schedOpen) closeScheduler();
   backupOpen=true;
-  // Position dropdown below the button
   const btn=$('backupBtn');
   const rect=btn.getBoundingClientRect();
   const dd=$('backupDropdown');
-  dd.style.top=(rect.bottom+8)+'px';
-  dd.style.right=(window.innerWidth-rect.right)+'px';
+  const isMobile=window.innerWidth<=600;
+  if(isMobile){
+    dd.style.top=(rect.bottom+6)+'px';
+    dd.style.left='.75rem';
+    dd.style.right='.75rem';
+    dd.style.width='';
+  } else {
+    dd.style.top=(rect.bottom+8)+'px';
+    dd.style.right=(window.innerWidth-rect.right)+'px';
+    dd.style.left='';
+    dd.style.width='310px';
+  }
   $('backupDropdown').classList.add('open');
   updateBkStatus();
   renderBkHistory();
@@ -1847,7 +2001,6 @@ function checkDay(){
 
 document.body.classList.remove('light');
 localStorage.setItem('hf_theme','dark');
-
 
 load();
 checkDay();
