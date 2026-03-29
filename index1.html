@@ -60,7 +60,7 @@ body {
 .wrap { position:relative; z-index:1; max-width:920px; margin:0 auto; padding:2rem 1.2rem 5rem; }
 
 /* HEADER */
-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:1rem; position:relative; z-index:100; }
+header { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:1rem; }
 .brand { display:flex; align-items:center; gap:.7rem; }
 .brand-icon { filter:drop-shadow(0 0 14px var(--accent)); flex-shrink:0; }
 .brand-text h1 { font-family:'Patrick Hand',cursive; font-size:2.1rem; line-height:1; background:linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
@@ -73,20 +73,16 @@ header { display:flex; justify-content:space-between; align-items:center; margin
   display:flex; align-items:center; gap:.5rem;
   padding:.42rem 1.1rem; font-family:'Patrick Hand',cursive; font-size:.82rem;
   color:var(--text-2); letter-spacing:.04em; cursor:pointer;
-  border:1px solid var(--glass-border); border-radius:24px;
-  background:var(--glass-bg);
-  backdrop-filter:blur(22px) saturate(1.9);
-  -webkit-backdrop-filter:blur(22px) saturate(1.9);
-  box-shadow:0 8px 36px var(--glass-shadow);
-  transition:color var(--tr), border-color .2s, background .2s;
+  border:none; background:none; width:100%; border-radius:24px;
+  transition:color var(--tr); position:relative; z-index:1;
 }
-.date-pill-btn:hover { color:var(--text-1); border-color:rgba(34,211,238,.5); background:rgba(255,255,255,.04); }
+.date-pill-btn:hover { color:var(--text-1); }
 .date-pill-chevron { transition:transform .3s cubic-bezier(.4,0,.2,1); flex-shrink:0; }
 .date-pill-btn.open .date-pill-chevron { transform:rotate(180deg); }
 
 /* SCHEDULE DROPDOWN */
 .schedule-dropdown {
-  position:fixed; top:60px; right:20px; width:330px; z-index:9000;
+  position:absolute; top:calc(100% + 10px); right:0; width:330px; z-index:300;
   background:rgba(10,7,22,0.97); backdrop-filter:blur(32px) saturate(2.2); -webkit-backdrop-filter:blur(32px) saturate(2.2);
   border:1px solid var(--glass-border); border-radius:20px;
   box-shadow:0 28px 70px rgba(0,0,0,.8),0 0 0 1px rgba(168,85,247,.12),0 0 40px rgba(34,211,238,.05);
@@ -111,7 +107,8 @@ header { display:flex; justify-content:space-between; align-items:center; margin
 .sched-del { background:none; border:none; color:var(--del); cursor:pointer; padding:0 2px; opacity:.55; transition:opacity .15s; display:flex; align-items:center; }
 .sched-del:hover { opacity:1; }
 
-/* overlays removed — document click handler used instead */
+#sched-overlay { position:fixed; inset:0; z-index:200; display:none; }
+#sched-overlay.open { display:block; }
 
 /* GRID */
 .grid { display:grid; grid-template-columns:1fr 1fr; gap:1.4rem; }
@@ -317,209 +314,6 @@ header { display:flex; justify-content:space-between; align-items:center; margin
 ::-webkit-scrollbar { width:5px; }
 ::-webkit-scrollbar-thumb { background:var(--accent); border-radius:4px; }
 ::-webkit-scrollbar-track { background:transparent; }
-
-/* ── BACKUP PANEL ── */
-.backup-wrap { position:relative; }
-.backup-btn {
-  display:flex; align-items:center; gap:.45rem;
-  padding:.4rem .9rem; border-radius:50px;
-  border:1px solid rgba(168,85,247,.4);
-  background:rgba(168,85,247,.08);
-  color:#c084fc; font-family:'Patrick Hand',cursive; font-size:.82rem;
-  cursor:pointer; transition:all .22s; white-space:nowrap;
-}
-.backup-btn:hover { background:rgba(168,85,247,.18); border-color:rgba(168,85,247,.7); color:#e879f9; transform:scale(1.04); }
-.backup-btn svg { flex-shrink:0; }
-
-/* auto-save pulse dot */
-.backup-pulse {
-  width:7px; height:7px; border-radius:50%;
-  background:#a855f7; flex-shrink:0;
-  box-shadow:0 0 6px #a855f7;
-  animation:bkpulse 2.4s ease-in-out infinite;
-}
-@keyframes bkpulse {
-  0%,100% { opacity:.5; transform:scale(1); }
-  50%      { opacity:1;  transform:scale(1.35); }
-}
-.backup-pulse.saved { background:#22d3ee; box-shadow:0 0 6px #22d3ee; animation:none; opacity:1; }
-
-/* dropdown panel — z:400 so it sits above the overlay at z:300 */
-.backup-dropdown {
-  position:fixed; top:60px; right:20px;
-  width:310px; z-index:9000;
-  background:rgba(10,7,22,0.97);
-  backdrop-filter:blur(32px) saturate(2.2); -webkit-backdrop-filter:blur(32px) saturate(2.2);
-  border:1px solid rgba(168,85,247,.4); border-radius:20px;
-  box-shadow:0 28px 70px rgba(0,0,0,.8),0 0 0 1px rgba(168,85,247,.1),0 0 40px rgba(168,85,247,.06);
-  padding:1.3rem; opacity:0; transform:translateY(-12px) scale(.96);
-  pointer-events:none; transition:opacity .25s cubic-bezier(.4,0,.2,1),transform .25s cubic-bezier(.4,0,.2,1);
-}
-.backup-dropdown.open { opacity:1; transform:translateY(0) scale(1); pointer-events:all; }
-
-.bk-hd { font-family:'Patrick Hand',cursive; font-size:1rem; color:var(--text-1);
-  display:flex; align-items:center; gap:.45rem;
-  border-bottom:1px solid rgba(255,255,255,.07); padding-bottom:.75rem; margin-bottom:.9rem; }
-
-.bk-status {
-  display:flex; align-items:center; gap:.6rem;
-  background:var(--input-bg); border:1px solid var(--input-border);
-  border-radius:12px; padding:.55rem .8rem; margin-bottom:.85rem;
-  font-family:'Patrick Hand',cursive; font-size:.8rem; color:var(--text-2);
-}
-.bk-status-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-.bk-status-dot.ok  { background:#22d3ee; box-shadow:0 0 6px #22d3ee; }
-.bk-status-dot.warn { background:#fbbf24; box-shadow:0 0 6px #fbbf24; }
-.bk-status-info { flex:1; }
-.bk-status-info strong { display:block; color:var(--text-1); font-size:.82rem; }
-
-.bk-row { display:flex; gap:.5rem; margin-bottom:.5rem; }
-.bk-action-btn {
-  flex:1; display:flex; align-items:center; justify-content:center; gap:.4rem;
-  padding:.52rem .6rem; border-radius:12px; border:none; cursor:pointer;
-  font-family:'Patrick Hand',cursive; font-size:.88rem; transition:all .18s;
-}
-.bk-export { background:linear-gradient(135deg,#a855f7,#7c3aed); color:#fff; box-shadow:0 2px 12px rgba(168,85,247,.3); }
-.bk-export:hover { transform:scale(1.02); box-shadow:0 4px 20px rgba(168,85,247,.5); }
-.bk-import { background:linear-gradient(135deg,#22d3ee,#0e7490); color:#fff; box-shadow:0 2px 12px rgba(34,211,238,.25); }
-.bk-import:hover { transform:scale(1.02); box-shadow:0 4px 20px rgba(34,211,238,.45); }
-.bk-restore { background:linear-gradient(135deg,#fbbf24,#d97706); color:#1a1000; box-shadow:0 2px 12px rgba(251,191,36,.25); font-size:.8rem; }
-.bk-restore:hover { transform:scale(1.02); box-shadow:0 4px 20px rgba(251,191,36,.4); }
-
-/* auto-backup interval selector */
-.bk-auto-row { display:flex; align-items:center; gap:.55rem; margin-top:.65rem; padding-top:.65rem; border-top:1px solid rgba(255,255,255,.07); }
-.bk-auto-lbl { font-family:'Patrick Hand',cursive; font-size:.78rem; color:var(--text-2); flex:1; }
-.bk-auto-sel {
-  background:var(--input-bg); border:1px solid var(--input-border);
-  color:var(--text-1); font-family:'Patrick Hand',cursive; font-size:.8rem;
-  border-radius:8px; padding:.3rem .5rem; outline:none; cursor:pointer;
-  transition:border-color var(--tr);
-}
-.bk-auto-sel:focus { border-color:#a855f7; }
-
-/* history list */
-.bk-history { margin-top:.75rem; max-height:120px; overflow-y:auto; }
-.bk-history-lbl { font-size:.63rem; color:var(--text-2); text-transform:uppercase; letter-spacing:.1em; font-weight:700; margin-bottom:.4rem; }
-.bk-hist-item { display:flex; align-items:center; gap:.5rem; padding:.32rem .55rem; border-radius:9px; background:var(--input-bg); border:1px solid var(--input-border); margin-bottom:.28rem; }
-.bk-hist-time { font-family:'Patrick Hand',cursive; font-size:.72rem; color:var(--accent3); flex-shrink:0; }
-.bk-hist-info { flex:1; font-family:'Patrick Hand',cursive; font-size:.76rem; color:var(--text-2); }
-.bk-hist-restore { background:none; border:none; color:#a855f7; cursor:pointer; font-size:.72rem; font-family:'Patrick Hand',cursive; padding:0 3px; opacity:.7; transition:opacity .15s; }
-.bk-hist-restore:hover { opacity:1; }
-
-/* ── SUB-HABITS ── */
-.subhabit-expand-btn {
-  background:none; border:none; cursor:pointer;
-  color:var(--text-2); padding:0 3px; display:flex; align-items:center;
-  transition:color .2s, transform .25s;
-  flex-shrink:0;
-}
-.subhabit-expand-btn:hover { color:var(--accent3); }
-.subhabit-expand-btn.open { color:var(--accent3); transform:rotate(90deg); }
-
-.subhabit-panel {
-  display:none; flex-direction:column; gap:.35rem;
-  margin-top:.55rem; padding-top:.55rem;
-  border-top:1px solid rgba(255,255,255,.07);
-}
-.subhabit-panel.open { display:flex; }
-
-.subhabit-progress {
-  height:3px; border-radius:2px;
-  background:var(--track); margin-bottom:.1rem; overflow:hidden;
-}
-.subhabit-progress-bar {
-  height:100%; border-radius:2px;
-  background:linear-gradient(90deg,var(--accent3),#0ea5e9);
-  transition:width .5s cubic-bezier(.4,0,.2,1);
-}
-
-.subhabit-row {
-  display:flex; align-items:center; gap:.5rem;
-  padding:.28rem .45rem; border-radius:9px;
-  background:rgba(255,255,255,.03);
-  transition:background .18s;
-}
-.subhabit-row:hover { background:rgba(255,255,255,.07); }
-
-.sub-toggle {
-  width:18px; height:18px; border-radius:4px; flex-shrink:0;
-  border:1.5px solid rgba(34,211,238,.5); background:transparent;
-  cursor:pointer; display:flex; align-items:center; justify-content:center;
-  font-size:11px; color:transparent;
-  transition:background .18s, color .18s, border-color .18s;
-}
-.sub-toggle.on { background:rgba(34,211,238,.25); border-color:var(--accent3); color:var(--accent3); }
-.sub-toggle.ro { pointer-events:none; cursor:default; opacity:.7; }
-
-.sub-name {
-  flex:1; font-family:'Patrick Hand',cursive; font-size:.82rem;
-  color:var(--text-2); transition:color .18s;
-}
-.sub-name.done { text-decoration:line-through; opacity:.5; }
-
-.sub-del {
-  background:none; border:none; color:var(--del);
-  cursor:pointer; padding:0 2px; opacity:0;
-  transition:opacity .15s; display:flex; align-items:center;
-}
-.subhabit-row:hover .sub-del { opacity:.6; }
-.sub-del:hover { opacity:1!important; }
-
-.sub-count-badge {
-  font-size:.62rem; font-family:'Patrick Hand',cursive;
-  color:var(--accent3); background:rgba(34,211,238,.1);
-  border:1px solid rgba(34,211,238,.2); border-radius:6px;
-  padding:1px 5px; flex-shrink:0;
-}
-
-.add-sub-row {
-  display:flex; gap:.35rem; margin-top:.3rem;
-}
-.add-sub-inp {
-  flex:1; padding:.3rem .65rem; border-radius:8px;
-  border:1px solid var(--input-border); background:var(--input-bg);
-  color:var(--text-1); font-family:'Patrick Hand',cursive; font-size:.8rem;
-  outline:none; transition:border-color .18s;
-}
-.add-sub-inp:focus { border-color:var(--accent3); }
-.add-sub-inp::placeholder { color:var(--text-2); }
-.add-sub-btn {
-  padding:.3rem .7rem; border-radius:8px;
-  background:linear-gradient(135deg,var(--accent3),#0e7490);
-  color:#fff; border:none; cursor:pointer;
-  font-family:'Patrick Hand',cursive; font-size:.8rem;
-  transition:transform .15s;
-}
-.add-sub-btn:hover { transform:scale(1.05); }
-
-/* habit-item when expanded — show sub-panel below */
-.habit-item-wrap {
-  display:flex; flex-direction:column;
-  border-radius:16px;
-  background:var(--input-bg); border:1px solid var(--input-border);
-  transition:background var(--tr), border-color var(--tr), transform .2s ease, box-shadow .2s ease;
-  position:relative; overflow:hidden;
-}
-.habit-item-wrap:hover {
-  background:var(--glass-hover); border-color:var(--accent);
-  transform:translateX(4px); box-shadow:0 4px 18px var(--glass-shadow);
-}
-.habit-item-wrap.is-done .h-name { text-decoration:line-through; color:var(--text-2); }
-.habit-item-wrap.is-done { opacity:.7; }
-.habit-item-wrap.dragging { opacity:.35; cursor:grabbing; }
-.habit-item-wrap.drag-over { border-color:var(--accent2); transform:scale(1.025); }
-.habit-item-wrap.past-done { opacity:.65; }
-.habit-item-wrap.past-done .h-name { text-decoration:line-through; color:var(--text-2); }
-.habit-item-wrap.shimmer::after {
-  content:''; position:absolute; inset:0;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
-  animation:shimmer .65s ease-out forwards; pointer-events:none;
-}
-.habit-main-row {
-  display:flex; align-items:center; gap:.75rem;
-  padding:.7rem .9rem; cursor:grab;
-}
-
   </style>
 </head>
 <body>
@@ -528,7 +322,7 @@ header { display:flex; justify-content:space-between; align-items:center; margin
 <div class="blob blob-b"></div>
 <canvas id="confetti"></canvas>
 <div id="toast"></div>
-<!-- overlays replaced with document click handler -->
+<div id="sched-overlay" onclick="closeScheduler()"></div>
 
 <div class="wrap">
 
@@ -548,7 +342,7 @@ header { display:flex; justify-content:space-between; align-items:center; margin
 
       <!-- DATE PILL — click to open scheduler -->
       <div class="date-pill-wrap">
-        <button class="date-pill-btn" id="datePillBtn" onclick="toggleScheduler(event)">
+        <button class="glass date-pill-btn" id="datePillBtn" onclick="toggleScheduler()">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
             <rect x="1.5" y="2" width="11" height="10.5" rx="2" stroke="var(--accent3)" stroke-width="1.2"/>
             <path d="M4.5 1V3M9.5 1V3" stroke="var(--accent3)" stroke-width="1.2" stroke-linecap="round"/>
@@ -561,7 +355,7 @@ header { display:flex; justify-content:space-between; align-items:center; margin
         </button>
 
         <!-- SCHEDULER DROPDOWN -->
-        <div class="schedule-dropdown" id="schedDropdown" onclick="event.stopPropagation()">
+        <div class="schedule-dropdown" id="schedDropdown">
           <div class="sched-hd">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <rect x="1" y="2.5" width="14" height="12" rx="2.5" stroke="var(--accent3)" stroke-width="1.2"/>
@@ -587,66 +381,7 @@ header { display:flex; justify-content:space-between; align-items:center; margin
         </div>
       </div>
 
-      <!-- BACKUP BUTTON -->
-      <div class="backup-wrap">
-        <button class="backup-btn" id="backupBtn" onclick="toggleBackup(event)">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M7 2V9M4.5 6.5L7 9L9.5 6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M2 10.5V11.5C2 12.05 2.45 12.5 3 12.5H11C11.55 12.5 12 12.05 12 11.5V10.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-          </svg>
-          Backup
-          <span class="backup-pulse" id="backupPulse"></span>
-        </button>
-
-        <!-- BACKUP DROPDOWN -->
-        <div class="backup-dropdown" id="backupDropdown" onclick="event.stopPropagation()">
-          <div class="bk-hd">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 2V10M5 7L8 10L11 7" stroke="#a855f7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M2 12V13C2 13.55 2.45 14 3 14H13C13.55 14 14 13.55 14 13V12" stroke="#a855f7" stroke-width="1.4" stroke-linecap="round"/>
-            </svg>
-            Data Backup &amp; Restore
-          </div>
-
-          <div class="bk-status" id="bkStatus">
-            <span class="bk-status-dot ok" id="bkDot"></span>
-            <div class="bk-status-info">
-              <strong id="bkStatusTitle">Auto-save active</strong>
-              <span id="bkStatusSub">Last saved: never</span>
-            </div>
-          </div>
-
-          <div class="bk-row">
-            <button class="bk-action-btn bk-export" onclick="exportBackup()">
-              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1.5V8.5M4 6L6.5 8.5L9 6" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1.5 10V11C1.5 11.28 1.72 11.5 2 11.5H11C11.28 11.5 11.5 11.28 11.5 11V10" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></svg>
-              Export .json
-            </button>
-            <button class="bk-action-btn bk-import" onclick="importBackup()">
-              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 9V2M4 4.5L6.5 2L9 4.5" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1.5 10V11C1.5 11.28 1.72 11.5 2 11.5H11C11.28 11.5 11.5 11.28 11.5 11V10" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></svg>
-              Import .json
-            </button>
-          </div>
-          <input type="file" id="bkFileIn" accept=".json" style="display:none" onchange="onImportFile(event)"/>
-
-          <div class="bk-auto-row">
-            <span class="bk-auto-lbl">
-              <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="vertical-align:middle;margin-right:3px"><circle cx="5.5" cy="5.5" r="4.5" stroke="#a855f7" stroke-width="1"/><path d="M5.5 3V5.5L7 7" stroke="#a855f7" stroke-width="1" stroke-linecap="round"/></svg>
-              Auto-backup every
-            </span>
-            <select class="bk-auto-sel" id="bkInterval" onchange="setBkInterval()">
-              <option value="5">5 min</option>
-              <option value="15" selected>15 min</option>
-              <option value="30">30 min</option>
-              <option value="60">60 min</option>
-              <option value="0">Off</option>
-            </select>
-          </div>
-
-          <div class="bk-history" id="bkHistory"></div>
-        </div>
-      </div>
-
-    </div><!-- /.header-right -->
+    </div>
   </header>
 
   <!-- GRID -->
@@ -851,30 +586,24 @@ header { display:flex; justify-content:space-between; align-items:center; margin
           </svg>
           Habit Analytics
         </span>
-        <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
-          <div style="display:flex;align-items:center;gap:1rem;font-family:'Patrick Hand',cursive;font-size:.72rem;color:var(--text-2)">
-            <span style="display:flex;align-items:center;gap:.35rem"><span style="width:10px;height:10px;border-radius:2px;background:#a855f7;display:inline-block;opacity:.8"></span>Daily score</span>
-            <span style="display:flex;align-items:center;gap:.35rem"><span style="width:18px;height:2.5px;background:#22d3ee;border-radius:2px;display:inline-block"></span>3-day avg</span>
-          </div>
-          <div class="period-toggle">
-            <button class="period-btn active" onclick="switchPeriod('weekly',this)">Weekly</button>
-            <button class="period-btn" onclick="switchPeriod('biweekly',this)">Bi-weekly</button>
-            <button class="period-btn" onclick="switchPeriod('monthly',this)">Monthly</button>
-          </div>
+        <div class="period-toggle">
+          <button class="period-btn active" onclick="switchPeriod('weekly',this)">Weekly</button>
+          <button class="period-btn" onclick="switchPeriod('biweekly',this)">Bi-weekly</button>
+          <button class="period-btn" onclick="switchPeriod('monthly',this)">Monthly</button>
         </div>
       </div>
       <div class="chart-area">
         <div id="tooltip" class="chart-tooltip"></div>
         <div class="chart-panel active" id="panel-weekly">
-          <svg class="svg-chart" id="chart-weekly" height="160" viewBox="0 0 860 160" preserveAspectRatio="none"></svg>
+          <svg class="svg-chart" id="chart-weekly" height="140" viewBox="0 0 860 140" preserveAspectRatio="none"></svg>
           <div class="stats-row" id="stats-weekly"></div>
         </div>
         <div class="chart-panel" id="panel-biweekly">
-          <svg class="svg-chart" id="chart-biweekly" height="160" viewBox="0 0 860 160" preserveAspectRatio="none"></svg>
+          <svg class="svg-chart" id="chart-biweekly" height="140" viewBox="0 0 860 140" preserveAspectRatio="none"></svg>
           <div class="stats-row" id="stats-biweekly"></div>
         </div>
         <div class="chart-panel" id="panel-monthly">
-          <svg class="svg-chart" id="chart-monthly" height="170" viewBox="0 0 860 170" preserveAspectRatio="none"></svg>
+          <svg class="svg-chart" id="chart-monthly" height="150" viewBox="0 0 860 150" preserveAspectRatio="none"></svg>
           <div class="stats-row" id="stats-monthly"></div>
         </div>
       </div>
@@ -916,7 +645,7 @@ const isToday     = () => viewOffset === 0;
 /* ── load / save ── */
 function load(){
   try{ const r=localStorage.getItem('hf4'); if(r) S=JSON.parse(r); }catch(e){}
-  S.habits    = (S.habits||[]).map(h=>({streak:0,bestStreak:0,completions:{},lastDate:null,steps:[],...h}));
+  S.habits    = (S.habits||[]).map(h=>({streak:0,bestStreak:0,completions:{},lastDate:null,...h}));
   S.todos     = S.todos   || [];
   S.history   = S.history || {};
   S.scheduled = S.scheduled || [];
@@ -1048,47 +777,36 @@ function syncDayNav(){
 ═══════════════════════════════════ */
 let schedOpen=false;
 
-function toggleScheduler(e){
-  if(e) e.stopPropagation();
-  if(schedOpen){ closeScheduler(); return; }
-  if(backupOpen) closeBackup();
-  schedOpen=true;
-  // Position dropdown below the button
-  const btn=$('datePillBtn');
-  const rect=btn.getBoundingClientRect();
-  const dd=$('schedDropdown');
-  dd.style.top=(rect.bottom+8)+'px';
-  dd.style.right=(window.innerWidth-rect.right)+'px';
-  dd.classList.add('open');
-  $('datePillBtn').classList.add('open');
-  const tom=addDays(todayStr(),1);
-  $('schedDateIn').value=tom;
-  $('schedDateIn').min=addDays(todayStr(),1);
-  renderSchedList();
-  setTimeout(()=>$('schedTaskIn').focus(),80);
+function toggleScheduler(){
+  schedOpen=!schedOpen;
+  $('schedDropdown').classList.toggle('open',schedOpen);
+  $('datePillBtn').classList.toggle('open',schedOpen);
+  $('sched-overlay').classList.toggle('open',schedOpen);
+  if(schedOpen){
+    const tom=addDays(todayStr(),1);
+    $('schedDateIn').value=tom;
+    $('schedDateIn').min=addDays(todayStr(),1);
+    renderSchedList();
+    setTimeout(()=>$('schedTaskIn').focus(),80);
+  }
 }
 
 function closeScheduler(){
   schedOpen=false;
   $('schedDropdown').classList.remove('open');
   $('datePillBtn').classList.remove('open');
+  $('sched-overlay').classList.remove('open');
 }
 
 function addScheduledTask(){
   const ti=$('schedTaskIn'),di=$('schedDateIn');
   const text=ti.value.trim(),date=di.value;
-  if(!text){ ti.style.borderColor='var(--accent)'; ti.focus(); setTimeout(()=>ti.style.borderColor='',1000); return; }
-  if(!date){ toast('Pick a date first!'); return; }
-  if(date<=todayStr()){ toast('Date must be in the future!'); di.focus(); return; }
+  if(!text){ti.focus();return;}
+  if(!date||date<=todayStr()){toast('Pick a future date!');return;}
   S.todos.push({id:Date.now()+'',text,done:false,scheduledFor:date});
-  ti.value='';
-  // Reset date to tomorrow
-  const tom=addDays(todayStr(),1);
-  di.value=tom;
-  save(); renderTodos(); renderSchedList();
+  ti.value=''; save(); renderTodos(); renderSchedList();
   toast(`Scheduled for ${fmtDate(date)}!`);
   tone(440,.18); setTimeout(()=>tone(550,.18),100);
-  ti.focus();
 }
 
 function removeScheduled(id){
@@ -1110,30 +828,7 @@ function renderSchedList(){
 }
 
 $('schedTaskIn').addEventListener('keydown',e=>{if(e.key==='Enter')addScheduledTask();});
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){
-    if(schedOpen) closeScheduler();
-    if(backupOpen) closeBackup();
-  }
-});
-
-// Close dropdowns when clicking anywhere outside them
-document.addEventListener('click', function(e){
-  if(schedOpen){
-    const dd=$('schedDropdown');
-    const btn=$('datePillBtn');
-    if(dd && !dd.contains(e.target) && btn && !btn.contains(e.target)){
-      closeScheduler();
-    }
-  }
-  if(backupOpen){
-    const dd=$('backupDropdown');
-    const btn=$('backupBtn');
-    if(dd && !dd.contains(e.target) && btn && !btn.contains(e.target)){
-      closeBackup();
-    }
-  }
-});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&schedOpen)closeScheduler();});
 
 /* ═══════════════════════════════════
    CHART ENGINE
@@ -1157,48 +852,28 @@ function renderAnalysis(){
 
 function drawChart(period,data,days){
   const svgEl=$('chart-'+period);
-  const W=860, H=period==='monthly'?170:160;
-  svgEl.setAttribute('viewBox',`0 0 ${W} ${H}`);
-  svgEl.setAttribute('height', H);
-
-  const pL=38, pR=16, pT=14, pB=30;
-  const cW=W-pL-pR, cH=H-pT-pB, n=data.length;
-  const barGId=`bg-${period}`, lineGId=`lg-${period}`, avgGId=`ag-${period}`;
+  const W=860,H=period==='monthly'?150:140;
+  const pL=34,pR=14,pT=12,pB=26;
+  const cW=W-pL-pR,cH=H-pT-pB,n=data.length;
+  const gId=`g-${period}`;
   let step=1; if(days===14)step=2; if(days===30)step=5;
 
-  // Calculate rolling 3-day average for the line
-  const movAvg=data.map((d,i)=>{
-    const slice=data.slice(Math.max(0,i-2),i+1);
-    return Math.round(slice.reduce((a,s)=>a+s.pct,0)/slice.length);
-  });
-
-  const barW=Math.max(4, (cW/n)*0.55);
-
-  // Bar center x positions
-  const xs=data.map((_,i)=>pL+(i/(n-1||1))*cW);
-
-  // Average line points (centered on bars)
-  const avgPts=movAvg.map((v,i)=>({x:xs[i], y:pT+cH-(v/100)*cH}));
+  const pts=data.map((d,i)=>({x:pL+(i/(n-1||1))*cW,y:pT+cH-(d.pct/100)*cH,pct:d.pct,date:d.date}));
 
   function smooth(ps){
     if(ps.length<2)return'';
     let d=`M ${ps[0].x} ${ps[0].y}`;
     for(let i=0;i<ps.length-1;i++){
-      const c1x=ps[i].x+(ps[i+1].x-ps[i].x)*.4, c1y=ps[i].y;
-      const c2x=ps[i].x+(ps[i+1].x-ps[i].x)*.6, c2y=ps[i+1].y;
-      d+=` C ${c1x} ${c1y},${c2x} ${c2y},${ps[i+1].x} ${ps[i+1].y}`;
+      const cpx1=ps[i].x+(ps[i+1].x-ps[i].x)*.45,cpy1=ps[i].y;
+      const cpx2=ps[i].x+(ps[i+1].x-ps[i].x)*.55,cpy2=ps[i+1].y;
+      d+=` C ${cpx1} ${cpy1},${cpx2} ${cpy2},${ps[i+1].x} ${ps[i+1].y}`;
     }
     return d;
   }
 
-  const avgLine=smooth(avgPts);
-  const avgArea=avgLine+` L ${avgPts[avgPts.length-1].x} ${pT+cH} L ${avgPts[0].x} ${pT+cH} Z`;
+  const line=smooth(pts);
+  const area=line+` L ${pts[pts.length-1].x} ${pT+cH} L ${pts[0].x} ${pT+cH} Z`;
 
-  // Overall avg for coloring
-  const overallAvg=Math.round(data.reduce((a,d)=>a+d.pct,0)/data.length);
-  const lineCol=overallAvg>=70?'#22d3ee':overallAvg>=40?'#a855f7':'#de5151';
-
-  // Grid
   let grid='';
   [0,25,50,75,100].forEach(v=>{
     const y=pT+cH-(v/100)*cH;
@@ -1206,73 +881,30 @@ function drawChart(period,data,days){
     grid+=`<text x="${pL-5}" y="${y+4}" class="chart-axis-label" text-anchor="end">${v}</text>`;
   });
 
-  // X labels
   let xlbls='';
   data.forEach((d,i)=>{
     if(i%step!==0&&i!==n-1)return;
+    const x=pL+(i/(n-1||1))*cW;
     const dt=new Date(d.date+'T12:00:00');
     const lbl=days===7?DAYS[dt.getDay()]:days===14?`${MONTHS[dt.getMonth()]} ${dt.getDate()}`:`${dt.getDate()} ${MONTHS[dt.getMonth()]}`;
-    xlbls+=`<text x="${xs[i]}" y="${H-6}" class="chart-axis-label" text-anchor="middle">${lbl}</text>`;
+    xlbls+=`<text x="${x}" y="${H-4}" class="chart-axis-label" text-anchor="middle">${lbl}</text>`;
   });
 
-  // Bars
-  let bars='';
-  data.forEach((d,i)=>{
-    const x=xs[i]-barW/2;
-    const barH=Math.max(3,(d.pct/100)*cH);
-    const y=pT+cH-barH;
-    const isToday_=d.date===todayStr();
-    const col=isToday_?'url(#'+barGId+'-today)':'url(#'+barGId+')';
-    const op=d.pct===0?0.18:1;
-    bars+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${barH.toFixed(1)}"
-      rx="3" fill="${col}" opacity="${op}" class="chart-bar"
-      onmouseover="showTip(event,'${d.date}',${d.pct},${movAvg[i]})"
-      onmouseout="hideTip()"
-      style="cursor:pointer"/>`;
-  });
-
-  // Line dots
   let dots='';
-  avgPts.forEach((p,i)=>{
-    const isToday_=data[i].date===todayStr();
-    dots+=`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${isToday_?5.5:3.5}"
-      fill="${isToday_?'var(--accent)':lineCol}"
-      stroke="${isToday_?'rgba(222,81,81,.35)':'rgba(168,85,247,.3)'}"
-      stroke-width="${isToday_?3:2}"
-      class="trend-dot"
-      onmouseover="showTip(event,'${data[i].date}',${data[i].pct},${movAvg[i]})"
-      onmouseout="hideTip()"
-    />`;
+  pts.forEach((p,i)=>{
+    const itd=data[i].date===todayStr();
+    dots+=`<circle cx="${p.x}" cy="${p.y}" r="${itd?5:3.5}" fill="${itd?'var(--accent)':'#a855f7'}" stroke="${itd?'rgba(222,81,81,.3)':'rgba(168,85,247,.3)'}" stroke-width="${itd?3:2}" class="trend-dot" onmouseover="showTip(event,'${data[i].date}',${p.pct})" onmouseout="hideTip()"/>`;
   });
 
-  svgEl.innerHTML=`
-    <defs>
-      <linearGradient id="${barGId}" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#a855f7" stop-opacity=".75"/>
-        <stop offset="100%" stop-color="#7c3aed" stop-opacity=".3"/>
-      </linearGradient>
-      <linearGradient id="${barGId}-today" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="var(--accent)" stop-opacity=".9"/>
-        <stop offset="100%" stop-color="var(--accent2)" stop-opacity=".4"/>
-      </linearGradient>
-      <linearGradient id="${avgGId}" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="${lineCol}" stop-opacity=".22"/>
-        <stop offset="100%" stop-color="${lineCol}" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-    ${grid}
-    ${xlbls}
-    ${bars}
-    <path d="${avgArea}" fill="url(#${avgGId})"/>
-    <path d="${avgLine}" stroke="${lineCol}" class="trend-path" stroke-width="2.2"/>
-    ${dots}
-  `;
+  const avg=Math.round(data.reduce((a,d)=>a+d.pct,0)/data.length);
+  const col=avg>=70?'#22d3ee':avg>=40?'#a855f7':'#de5151';
+
+  svgEl.innerHTML=`<defs><linearGradient id="${gId}" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="${col}" stop-opacity=".5"/><stop offset="100%" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>${grid}${xlbls}<path d="${area}" fill="url(#${gId})" class="trend-area"/><path d="${line}" stroke="${col}" class="trend-path"/>${dots}`;
 }
 
-function showTip(e,date,pct,avg){
+function showTip(e,date,pct){
   const tt=$('tooltip');
-  const avgTxt=avg!==undefined&&avg!==pct?` · 3d avg: ${avg}%`:'';
-  tt.textContent=`${fmtDate(date)} · ${pct}%${avgTxt}`;
+  tt.textContent=`${fmtDate(date)} · ${pct}%`;
   tt.style.opacity='1';
   const r=tt.parentElement.getBoundingClientRect();
   tt.style.left=(e.clientX-r.left+12)+'px';
@@ -1330,84 +962,46 @@ function renderHabits(){
     const done=!!h.completions[vd];
     const l7=last7(),cnt=l7.filter(d=>h.completions[d]).length;
     const wpct=Math.round(cnt/7*100);
-    const steps=h.steps||[];
-    const stepsDoneToday=steps.filter(s=>s.completions&&s.completions[vd]).length;
-    const stepsPct=steps.length?Math.round(stepsDoneToday/steps.length*100):0;
-
-    const wrap=document.createElement('div');
-    wrap.className='habit-item-wrap pop'+(done?' is-done':'')+(past&&done?' past-done':'');
-    wrap.dataset.id=h.id;
-
-    const stepsExpId='steps-'+h.id;
-    const stepsBadge=steps.length?`<span class="sub-count-badge">${stepsDoneToday}/${steps.length}</span>`:'';
+    const el=document.createElement('div');
 
     if(past){
-      wrap.style.cursor='default';
-      wrap.innerHTML=`
-        <div class="habit-main-row" style="cursor:default">
-          <span class="drag-handle" style="opacity:.12;pointer-events:none">⠿</span>
-          <div>${miniRing(wpct)}</div>
-          <button class="h-toggle${done?' on':''} ro">${done?'✓':''}</button>
-          <div class="h-info">
-            <div class="h-name">${esc(h.name)}</div>
-            <div class="h-meta">
-              <span class="streak">${iconFlame()} ${h.streak} day${h.streak!==1?'s':''}</span>
-            </div>
+      // Read-only past view
+      el.className='habit-item pop'+(done?' past-done':'');
+      el.style.cursor='default';
+      el.innerHTML=`
+        <span class="drag-handle" style="opacity:.12;pointer-events:none">⠿</span>
+        <div>${miniRing(wpct)}</div>
+        <button class="h-toggle${done?' on':''} ro">${done?'✓':''}</button>
+        <div class="h-info">
+          <div class="h-name">${esc(h.name)}</div>
+          <div class="h-meta">
+            <span class="streak">${iconFlame()} ${h.streak} day${h.streak!==1?'s':''}</span>
           </div>
-          ${stepsBadge}
-          <span class="past-badge ${done?'done':'miss'}">${done?'Done':'Missed'}</span>
-          ${steps.length?`<button class="subhabit-expand-btn" onclick="toggleSteps('${h.id}',this)" title="View steps"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M5 3L8.5 6.5L5 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`:''}
         </div>
-        ${steps.length?`<div class="subhabit-panel" id="${stepsExpId}">
-          <div class="subhabit-progress"><div class="subhabit-progress-bar" style="width:${stepsPct}%"></div></div>
-          ${steps.map(s=>{
-            const sdone=!!(s.completions&&s.completions[vd]);
-            return `<div class="subhabit-row">
-              <button class="sub-toggle${sdone?' on':''} ro">${sdone?'✓':''}</button>
-              <span class="sub-name${sdone?' done':''}">${esc(s.name)}</span>
-            </div>`;
-          }).join('')}
-        </div>`:''}`;
+        <span class="past-badge ${done?'done':'miss'}">${done?'Done':'Missed'}</span>`;
     } else {
-      wrap.innerHTML=`
-        <div class="habit-main-row">
-          <span class="drag-handle" title="Drag to reorder">⠿</span>
-          <div>${miniRing(wpct)}</div>
-          <button class="h-toggle${done?' on':''}">${done?'✓':''}</button>
-          <div class="h-info">
-            <div class="h-name" id="hn-${h.id}">${esc(h.name)}</div>
-            <div class="h-meta">
-              <span class="streak">${iconFlame()} ${h.streak} day${h.streak!==1?'s':''}</span>
-              <span>· ${wpct}% this week</span>
-            </div>
-          </div>
-          ${stepsBadge}
-          <div class="h-actions">
-            <button class="subhabit-expand-btn" onclick="toggleSteps('${h.id}',this)" title="Add/view steps"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M5 3L8.5 6.5L5 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-            <button class="btn icon-btn" onclick="editHabit('${h.id}')" title="Edit">${iconEdit()}</button>
-            <button class="btn icon-btn del-btn" onclick="delHabit('${h.id}')" title="Delete">${iconTrash()}</button>
+      // Normal today view
+      el.className='habit-item pop'+(done?' is-done':'');
+      el.dataset.id=h.id;
+      el.innerHTML=`
+        <span class="drag-handle" title="Drag to reorder">⠿</span>
+        <div>${miniRing(wpct)}</div>
+        <button class="h-toggle${done?' on':''}">${done?'✓':''}</button>
+        <div class="h-info">
+          <div class="h-name" id="hn-${h.id}">${esc(h.name)}</div>
+          <div class="h-meta">
+            <span class="streak">${iconFlame()} ${h.streak} day${h.streak!==1?'s':''}</span>
+            <span>· ${wpct}% this week</span>
           </div>
         </div>
-        <div class="subhabit-panel" id="${stepsExpId}">
-          <div class="subhabit-progress"><div class="subhabit-progress-bar" style="width:${stepsPct}%"></div></div>
-          ${steps.map(s=>{
-            const sdone=!!(s.completions&&s.completions[vd]);
-            return `<div class="subhabit-row">
-              <button class="sub-toggle${sdone?' on':''}" onclick="toggleStep('${h.id}','${s.id}')">${sdone?'✓':''}</button>
-              <span class="sub-name${sdone?' done':''}">${esc(s.name)}</span>
-              <button class="sub-del" onclick="delStep('${h.id}','${s.id}')" title="Remove step">${iconTrash()}</button>
-            </div>`;
-          }).join('')}
-          <div class="add-sub-row">
-            <input class="add-sub-inp" id="stepIn-${h.id}" placeholder="Add a step…" maxlength="60"
-              onkeydown="if(event.key==='Enter')addStep('${h.id}')"/>
-            <button class="add-sub-btn" onclick="addStep('${h.id}')">+ Step</button>
-          </div>
+        <div class="h-actions">
+          <button class="btn icon-btn" onclick="editHabit('${h.id}')" title="Edit">${iconEdit()}</button>
+          <button class="btn icon-btn del-btn" onclick="delHabit('${h.id}')" title="Delete">${iconTrash()}</button>
         </div>`;
-      wrap.querySelector('.h-toggle').onclick=()=>toggleHabit(h.id);
-      dnd(wrap,i);
+      el.querySelector('.h-toggle').onclick=()=>toggleHabit(h.id);
+      dnd(el,i);
     }
-    list.appendChild(wrap);
+    list.appendChild(el);
   });
 }
 
@@ -1493,7 +1087,7 @@ function renderAll(){
 ═══════════════════════════════════ */
 function addHabit(){
   const inp=$('habitIn'),name=inp.value.trim(); if(!name)return;
-  S.habits.push({id:Date.now()+'',name,completions:{},streak:0,bestStreak:0,lastDate:null,steps:[]});
+  S.habits.push({id:Date.now()+'',name,completions:{},streak:0,bestStreak:0,lastDate:null});
   inp.value='';save();renderAll();
 }
 
@@ -1536,83 +1130,6 @@ function delHabit(id){
   S.habits=S.habits.filter(h=>h.id!==id);save();renderAll();
 }
 
-/* ── Sub-habit (step) actions ── */
-function toggleSteps(hid, btn){
-  const panel=$('steps-'+hid);
-  if(!panel)return;
-  const open=panel.classList.toggle('open');
-  btn.classList.toggle('open',open);
-}
-
-function addStep(hid){
-  const inp=$('stepIn-'+hid); if(!inp)return;
-  const name=inp.value.trim(); if(!name)return;
-  const h=S.habits.find(x=>x.id===hid); if(!h)return;
-  if(!h.steps)h.steps=[];
-  h.steps.push({id:Date.now()+'',name,completions:{}});
-  inp.value='';
-  save(); renderHabits();
-  // Re-open the panel after re-render
-  const panel=$('steps-'+hid);
-  const btn=document.querySelector('.subhabit-expand-btn[onclick*="'+hid+'"]');
-  if(panel){ panel.classList.add('open'); }
-  if(btn){ btn.classList.add('open'); }
-  // focus the new input
-  const newInp=$('stepIn-'+hid);
-  if(newInp) newInp.focus();
-}
-
-function toggleStep(hid, sid){
-  if(!isToday())return;
-  const h=S.habits.find(x=>x.id===hid); if(!h)return;
-  const s=(h.steps||[]).find(x=>x.id===sid); if(!s)return;
-  const td=todayStr();
-  if(!s.completions)s.completions={};
-  s.completions[td]=!s.completions[td];
-  save();
-  // Re-render just the steps panel without full renderAll
-  const vd=viewDateStr();
-  const steps=h.steps||[];
-  const stepsDoneToday=steps.filter(st=>st.completions&&st.completions[vd]).length;
-  const stepsPct=steps.length?Math.round(stepsDoneToday/steps.length*100):0;
-  // Update progress bar
-  const panel=$('steps-'+hid);
-  if(panel){
-    const bar=panel.querySelector('.subhabit-progress-bar');
-    if(bar) bar.style.width=stepsPct+'%';
-    // Update the toggled step row
-    steps.forEach(st=>{
-      const sdone=!!(st.completions&&st.completions[vd]);
-      // Find the toggle for this step
-    });
-  }
-  // Badge update
-  const wrap=document.querySelector('[data-id="'+hid+'"]');
-  if(wrap){
-    const badge=wrap.querySelector('.sub-count-badge');
-    if(badge) badge.textContent=stepsDoneToday+'/'+steps.length;
-  }
-  renderHabits();
-  // Re-open panel
-  const panelNew=$('steps-'+hid);
-  if(panelNew) panelNew.classList.add('open');
-  const btn=document.querySelector('.subhabit-expand-btn[onclick*="'+hid+'"]');
-  if(btn) btn.classList.add('open');
-}
-
-function delStep(hid, sid){
-  const h=S.habits.find(x=>x.id===hid); if(!h)return;
-  h.steps=(h.steps||[]).filter(s=>s.id!==sid);
-  save(); renderHabits();
-  // Re-open panel if it had steps remaining
-  if(h.steps.length){
-    const panel=$('steps-'+hid);
-    if(panel) panel.classList.add('open');
-    const btn=document.querySelector('.subhabit-expand-btn[onclick*="'+hid+'"]');
-    if(btn) btn.classList.add('open');
-  }
-}
-
 function addTodo(){
   const inp=$('todoIn'),text=inp.value.trim(); if(!text)return;
   S.todos.push({id:Date.now()+'',text,done:false});
@@ -1628,203 +1145,6 @@ function toggleTodo(id){
 function delTodo(id){
   S.todos=S.todos.filter(t=>t.id!==id);save();renderTodos();
   if(schedOpen)renderSchedList();
-}
-
-/* ═══════════════════════════════════
-   BACKUP SYSTEM
-═══════════════════════════════════ */
-let backupOpen   = false;
-let bkAutoTimer  = null;
-let bkIntervalMs = 15 * 60 * 1000; // default 15 min
-
-/* In-session backup snapshots (up to 5 kept in localStorage) */
-const BK_KEY = 'hf4_backups';
-
-function bkLoad(){
-  try{ return JSON.parse(localStorage.getItem(BK_KEY)||'[]'); }catch(e){ return []; }
-}
-function bkSave(list){ localStorage.setItem(BK_KEY, JSON.stringify(list.slice(-5))); }
-
-/* Create a snapshot entry */
-function snapshotNow(label){
-  const list = bkLoad();
-  const snap = {
-    ts:     Date.now(),
-    label:  label || 'Auto',
-    habits: S.habits.length,
-    todos:  S.todos.length,
-    data:   JSON.stringify(S),
-  };
-  list.push(snap);
-  bkSave(list);
-  updateBkStatus();
-  renderBkHistory();
-}
-
-/* Update the status bar */
-function updateBkStatus(){
-  const list = bkLoad();
-  const dot  = $('bkDot');
-  const title= $('bkStatusTitle');
-  const sub  = $('bkStatusSub');
-  if(!list.length){
-    dot.className='bk-status-dot warn';
-    title.textContent='No backups yet';
-    sub.textContent='Export or wait for auto-backup';
-    return;
-  }
-  const last = list[list.length-1];
-  dot.className='bk-status-dot ok';
-  title.textContent=`${last.habits} habit${last.habits!==1?'s':''}, ${last.todos} task${last.todos!==1?'s':''}`;
-  const ago  = Math.round((Date.now()-last.ts)/60000);
-  sub.textContent = ago < 1 ? 'Saved just now'
-    : ago < 60 ? `Saved ${ago} min ago`
-    : `Saved ${Math.round(ago/60)}h ago`;
-
-  // Pulse dot in header
-  const pulse = $('backupPulse');
-  if(pulse){ pulse.className='backup-pulse saved'; setTimeout(()=>{ pulse.className='backup-pulse'; },2000); }
-}
-
-/* Render the recent-snapshots history list */
-function renderBkHistory(){
-  const el   = $('bkHistory'); if(!el) return;
-  const list = bkLoad();
-  if(!list.length){ el.innerHTML=''; return; }
-  const reversed = [...list].reverse();
-  el.innerHTML = `<div class="bk-history-lbl">Recent snapshots (${list.length}/5)</div>` +
-    reversed.map((s,i)=>{
-      const realIdx = list.length-1-i; // index into original list
-      const d = new Date(s.ts);
-      const timeStr = d.toLocaleDateString(undefined,{month:'short',day:'numeric'})
-        +' '+d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});
-      return `<div class="bk-hist-item">
-        <span class="bk-hist-time">${timeStr}</span>
-        <span class="bk-hist-info">${s.label} · ${s.habits} habits, ${s.todos} tasks</span>
-        <button class="bk-hist-restore" onclick="restoreSnapshot(${realIdx})" title="Restore this snapshot">Restore</button>
-      </div>`;
-    }).join('');
-}
-
-/* Restore from a snapshot */
-function restoreSnapshot(idx){
-  const list = bkLoad();
-  const snap = list[idx]; if(!snap) return;
-  if(!confirm(`Restore snapshot from ${new Date(snap.ts).toLocaleString()}?\nThis will overwrite your current data.`)) return;
-  try{
-    S = JSON.parse(snap.data);
-    S.habits    = (S.habits||[]).map(h=>({streak:0,bestStreak:0,completions:{},lastDate:null,steps:[],...h}));
-    S.todos     = S.todos   || [];
-    S.history   = S.history || {};
-    S.scheduled = S.scheduled || [];
-    save();
-    renderAll();
-    toast('Snapshot restored!');
-    tone(440,.2); setTimeout(()=>tone(660,.2),120);
-    closeBackup();
-  }catch(e){ alert('Could not restore snapshot.'); }
-}
-
-/* ── Export: download a .json file ── */
-function exportBackup(){
-  const payload = {
-    version:   2,
-    exportedAt: new Date().toISOString(),
-    appName:   'HabitFlow',
-    data:      S,
-  };
-  const blob = new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = `habitflow-backup-${todayStr()}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-  snapshotNow('Manual export');
-  toast('Backup downloaded!');
-}
-
-/* ── Import: read a .json file ── */
-function importBackup(){
-  $('bkFileIn').value='';
-  $('bkFileIn').click();
-}
-function onImportFile(e){
-  const file = e.target.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try{
-      const parsed = JSON.parse(ev.target.result);
-      const raw = parsed.data || parsed; // support both wrapped and raw formats
-      if(!raw.habits) throw new Error('Invalid backup file');
-      if(!confirm(`Import backup from ${file.name}?\nThis will overwrite your current data.`)) return;
-      S = raw;
-      S.habits    = (S.habits||[]).map(h=>({streak:0,bestStreak:0,completions:{},lastDate:null,steps:[],...h}));
-      S.todos     = S.todos   || [];
-      S.history   = S.history || {};
-      S.scheduled = S.scheduled || [];
-      save();
-      snapshotNow('Imported');
-      renderAll();
-      toast('Backup imported successfully!');
-      tone(523,.2); setTimeout(()=>tone(784,.2),130);
-      closeBackup();
-    }catch(err){
-      alert('Could not read backup file. Make sure it\'s a valid HabitFlow .json export.');
-    }
-  };
-  reader.readAsText(file);
-}
-
-/* ── Auto-backup timer ── */
-function startAutoBackup(){
-  if(bkAutoTimer) clearInterval(bkAutoTimer);
-  if(bkIntervalMs <= 0) return;
-  bkAutoTimer = setInterval(()=>{
-    if(S.habits.length || S.todos.length){
-      snapshotNow('Auto');
-    }
-  }, bkIntervalMs);
-}
-
-function setBkInterval(){
-  const sel = $('bkInterval');
-  const mins = parseInt(sel.value);
-  bkIntervalMs = mins * 60 * 1000;
-  localStorage.setItem('hf_bkInterval', mins);
-  startAutoBackup();
-  toast(mins===0 ? 'Auto-backup turned off' : `Auto-backup set to every ${mins} min`);
-}
-
-/* ── Toggle / close backup panel ── */
-function toggleBackup(e){
-  if(e) e.stopPropagation();
-  if(backupOpen){ closeBackup(); return; }
-  if(schedOpen) closeScheduler();
-  backupOpen=true;
-  // Position dropdown below the button
-  const btn=$('backupBtn');
-  const rect=btn.getBoundingClientRect();
-  const dd=$('backupDropdown');
-  dd.style.top=(rect.bottom+8)+'px';
-  dd.style.right=(window.innerWidth-rect.right)+'px';
-  $('backupDropdown').classList.add('open');
-  updateBkStatus();
-  renderBkHistory();
-}
-function closeBackup(){
-  backupOpen=false;
-  $('backupDropdown').classList.remove('open');
-}
-
-/* ── Restore saved interval preference ── */
-function initBackup(){
-  const saved = parseInt(localStorage.getItem('hf_bkInterval')||'15');
-  bkIntervalMs = saved * 60 * 1000;
-  const sel = $('bkInterval');
-  if(sel) sel.value = saved;
-  startAutoBackup();
-  updateBkStatus();
 }
 
 /* ═══════════════════════════════════
@@ -1852,9 +1172,6 @@ load();
 checkDay();
 setDatePill();
 renderAll();
-initBackup();
-// Take an initial snapshot on first load if data exists
-if(S.habits.length || S.todos.length) snapshotNow('Session start');
 setInterval(()=>{checkDay();setDatePill();renderOverview();renderWeekDots();renderAnalysis();},60000);
 </script>
 </body>
