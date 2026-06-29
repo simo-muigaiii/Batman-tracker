@@ -698,22 +698,18 @@ body.light .t-track::after { transform: translateX(18px); }
 ::-webkit-scrollbar-track { background:transparent; }
 
 /* ═══════════════════════════════════════════════════════════
-   MOBILE OPTIMIZATION — eliminate white glare on scroll
+   MOBILE OPTIMIZATION — disable fixed background image glare
 ═══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  html, body {
-    -webkit-overflow-scrolling: touch;
-    -webkit-backface-visibility: hidden;
-    -webkit-perspective: 1000;
-  }
   body {
-    background-attachment: scroll !important;
-    overflow-y: scroll;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
+    background-image: 
+      radial-gradient(ellipse at 18% 18%, var(--blob1) 0%, transparent 52%),
+      radial-gradient(ellipse at 82% 82%, var(--blob2) 0%, transparent 52%),
+      linear-gradient(155deg, var(--bg1) 0%, var(--bg2) 100%);
+    background-attachment: scroll;
   }
   body::before {
-    background-attachment: scroll !important;
+    display: none !important;
   }
 }
 

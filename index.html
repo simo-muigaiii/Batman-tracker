@@ -525,17 +525,16 @@ header { display:flex; justify-content:space-between; align-items:center; margin
 ═══════════════════════════════════ */
 @media (max-width: 600px) {
 
-  /* ── Smooth scrolling & eliminate white glare ── */
-  html, body {
-    -webkit-overflow-scrolling: touch;
-    -webkit-backface-visibility: hidden;
-    -webkit-perspective: 1000;
-  }
+  /* ── Disable fixed background image on mobile to eliminate glare ── */
   body {
-    background-attachment: scroll !important;
-    overflow-y: scroll;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
+    background-image: 
+      radial-gradient(ellipse at 18% 18%, var(--blob1) 0%, transparent 52%),
+      radial-gradient(ellipse at 82% 82%, var(--blob2) 0%, transparent 52%),
+      linear-gradient(155deg, rgba(8,8,16,var(--bg-overlay)) 0%, rgba(16,9,30,var(--bg-overlay)) 100%);
+    background-attachment: scroll;
+  }
+  body::before {
+    display: none;
   }
 
   /* ── Layout ── */
