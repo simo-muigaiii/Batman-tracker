@@ -525,6 +525,19 @@ header { display:flex; justify-content:space-between; align-items:center; margin
 ═══════════════════════════════════ */
 @media (max-width: 600px) {
 
+  /* ── Smooth scrolling & eliminate white glare ── */
+  html, body {
+    -webkit-overflow-scrolling: touch;
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
+  }
+  body {
+    background-attachment: scroll !important;
+    overflow-y: scroll;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+
   /* ── Layout ── */
   .wrap { padding: 1rem .75rem 4rem; }
   .grid { grid-template-columns: 1fr; gap: 1rem; }

@@ -697,6 +697,26 @@ body.light .t-track::after { transform: translateX(18px); }
 ::-webkit-scrollbar-thumb { background:var(--accent); border-radius:4px; }
 ::-webkit-scrollbar-track { background:transparent; }
 
+/* ═══════════════════════════════════════════════════════════
+   MOBILE OPTIMIZATION — eliminate white glare on scroll
+═══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  html, body {
+    -webkit-overflow-scrolling: touch;
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
+  }
+  body {
+    background-attachment: scroll !important;
+    overflow-y: scroll;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  body::before {
+    background-attachment: scroll !important;
+  }
+}
+
   </style>
 </head>
 <body>

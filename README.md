@@ -10,5 +10,9 @@ tasks to do:
     ✅go back to check on days done previous day and next day buttons
     ✅expand calendar shows the circles for the habits achieved
     add reminder
+    habits tab to scroll internally when a habit is added ans also for a task to reduce page size
+    habits to be counted from day added (missed days included) not generally missed days.
+   drop down functionality and calendar create using page avoid relying on system dropdowns
+    title logo
     
 
