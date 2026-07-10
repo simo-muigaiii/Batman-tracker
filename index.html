@@ -1827,16 +1827,19 @@ function addTodo(){
   const inp=$('todoIn'),text=inp.value.trim(); if(!text)return;
   S.todos.push({id:Date.now()+'',text,done:false});
   inp.value='';save();renderTodos();
+  capScrollBox('todoScrollBox', $('todoList'));
 }
 
 function toggleTodo(id){
   const t=S.todos.find(x=>x.id===id); if(!t)return;
   t.done=!t.done;if(t.done)tone(660,.22);
   save();renderTodos();
+  capScrollBox('todoScrollBox', $('todoList'));
 }
 
 function delTodo(id){
   S.todos=S.todos.filter(t=>t.id!==id);save();renderTodos();
+  capScrollBox('todoScrollBox', $('todoList'));
   if(schedOpen)renderSchedList();
 }
 
