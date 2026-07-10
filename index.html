@@ -37,7 +37,7 @@ body {
   background-attachment: fixed; color: var(--text-1); overflow-x: hidden; transition: color var(--tr);
 }
 
-.blob { position:fixed; border-radius:50%; filter:blur(100px); pointer-events:none; z-index:0; opacity:.22; }
+.blob { position:absolute; border-radius:50%; filter:blur(100px); pointer-events:none; z-index:0; opacity:.22; }
 .blob-a { width:560px; height:560px; background:radial-gradient(circle,var(--blob1),transparent 70%); top:-140px; left:-140px; animation:drift 14s ease-in-out infinite alternate; }
 .blob-b { width:460px; height:460px; background:radial-gradient(circle,var(--blob2),transparent 70%); bottom:-110px; right:-110px; animation:drift 18s ease-in-out infinite alternate-reverse; }
 @keyframes drift { 0%{transform:translate(0,0) scale(1)} 100%{transform:translate(55px,45px) scale(1.18)} }
@@ -58,6 +58,18 @@ body {
 
 /* LAYOUT */
 .wrap { position:relative; z-index:1; max-width:920px; margin:0 auto; padding:2rem 1.2rem 5rem; }
+
+/* FOOTER */
+.app-footer {
+  margin-top: 3rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid rgba(255,255,255,.08);
+  text-align: center;
+  font-family: 'Patrick Hand', cursive;
+  font-size: .82rem;
+  color: var(--text-2);
+  letter-spacing: .02em;
+}
 
 /* HEADER */
 header { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:1rem; position:relative; z-index:100; }
@@ -525,12 +537,16 @@ header { display:flex; justify-content:space-between; align-items:center; margin
 ═══════════════════════════════════ */
 @media (max-width: 600px) {
 
-  /* ── Disable fixed background image on mobile to eliminate glare ── */
+  /* ── Keep the background image on mobile, just drop fixed attachment to stop the scroll glare ── */
   body {
     background-image: 
       radial-gradient(ellipse at 18% 18%, var(--blob1) 0%, transparent 52%),
       radial-gradient(ellipse at 82% 82%, var(--blob2) 0%, transparent 52%),
-      linear-gradient(155deg, rgba(8,8,16,var(--bg-overlay)) 0%, rgba(16,9,30,var(--bg-overlay)) 100%);
+      linear-gradient(155deg, rgba(8,8,16,var(--bg-overlay)) 0%, rgba(16,9,30,var(--bg-overlay)) 100%),
+      var(--bg-image-url);
+    background-position: var(--bg-image-position);
+    background-size: var(--bg-image-size);
+    background-repeat: no-repeat;
     background-attachment: scroll;
   }
   body::before {
@@ -1030,6 +1046,10 @@ header { display:flex; justify-content:space-between; align-items:center; margin
     </div>
 
   </div>
+
+  <footer class="app-footer">
+    &copy; <span id="footerYear"></span> HabitFlow. All rights reserved.
+  </footer>
 </div>
 
 <script>
@@ -2001,6 +2021,11 @@ $('addHabitBtn').addEventListener('click',addHabit);
 $('todoIn').addEventListener('keydown',e=>{if(e.key==='Enter')addTodo();});
 $('addTodoBtn').addEventListener('click',addTodo);
 
+function setFooterYear(){
+  const el = $('footerYear');
+  if(el) el.textContent = new Date().getFullYear();
+}
+
 function setDatePill(){
   $('datePillText').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
 }
@@ -2017,6 +2042,7 @@ localStorage.setItem('hf_theme','dark');
 load();
 checkDay();
 setDatePill();
+setFooterYear();
 renderAll();
 initBackup();
 // Take an initial snapshot on first load if data exists
